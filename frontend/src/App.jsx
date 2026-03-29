@@ -10,19 +10,37 @@ export default function App() {
 
     return (
         <div className="container">
-            <h1 className="title">
-                Gov Report <span className="highlight">Analyzer</span>
-            </h1>
-            <p className="subtitle">
-                AI-powered document summarization using Gemini
-            </p>
 
-            <FileUpload setSummary={setSummary} setLoading={setLoading} />
+            {/* 🔥 Header */}
+            <div className="header">
+                <h1 className="title">
+                    Gov Report <span className="highlight">Analyzer</span>
+                </h1>
+                <p className="subtitle">
+                    AI-powered document summarization using Gemini
+                </p>
+            </div>
 
-            {loading && <Loader />}
-            {summary && <SummaryCard summary={summary} />}
+            {/* 📦 Upload */}
+            <div className="section">
+                <FileUpload setSummary={setSummary} setLoading={setLoading} />
+            </div>
 
-            {/* 🔥 Footer */}
+            {/* ⏳ Loader */}
+            {loading && (
+                <div className="section">
+                    <Loader />
+                </div>
+            )}
+
+            {/* 📄 Summary */}
+            {summary && (
+                <div className="section">
+                    <SummaryCard summary={summary} />
+                </div>
+            )}
+
+            {/* 🔗 Footer */}
             <div className="footer">
                 <a href="https://samp231004.github.io/Portfolio/" target="_blank">
                     <FaGlobe />
@@ -34,6 +52,7 @@ export default function App() {
                     <FaLinkedin />
                 </a>
             </div>
+
         </div>
     );
 }
