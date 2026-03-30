@@ -1,6 +1,9 @@
 require("dotenv").config();
 
 const functions = require("firebase-functions");
+const multer = require("multer");
+const pdfParse = require("pdf-parse");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const express = require("express");
 const cors = require("cors");
 
@@ -13,6 +16,8 @@ app.use(cors());
 
 // 🚀 Using rawBody (Firebase-safe)
 app.post("/analyze", async (req, res) => {
+    const startTime = Date.now();
+
     try {
         if (!req.rawBody) {
             return res.status(400).send("No file received");
@@ -20,11 +25,15 @@ app.post("/analyze", async (req, res) => {
 
         const fileBuffer = req.rawBody;
 
-        // ⚠️ Content-Type may be wrong in binary → fallback to PDF
+        // ✅ FILE SIZE LIMIT (5MB)
+        if (fileBuffer.length > 5 * 1024 * 1024) {
+            return res.status(400).send("File too large (max 5MB)");
+        }
+
         let mimetype = req.headers["content-type"];
 
         if (!mimetype || mimetype === "application/octet-stream") {
-            mimetype = "application/pdf"; // fallback assumption
+            mimetype = "application/pdf";
         }
 
         if (
@@ -42,32 +51,23 @@ app.post("/analyze", async (req, res) => {
         // 📄 Extract text
         const text = await extractText(file);
 
-        console.log("Extracted text length:", text?.length || 0);
-
-        // ✅ FALLBACK (IMPORTANT FIX)
-        let finalText = text;
-
-        if (!finalText || finalText.trim().length < 10) {
-            console.log("⚠️ Fallback triggered");
-
-            finalText =
-                "This is a government report discussing policies, economic growth, and development initiatives across sectors.";
+        if (!text || text.length < 20) {
+            return res.status(400).send("Invalid or empty document");
         }
 
-        // 🏛️ (optional) Government check
-        // if (!finalText.toLowerCase().includes("government")) {
-        //   return res.status(400).send("Not a government report");
-        // }
+        // 🤖 Gemini (optimized now)
+        const summary = await analyzeFile(text);
 
-        // 🤖 Gemini summary
-        const summary = await analyzeFile(finalText);
+        const endTime = Date.now();
 
-        res.json({ summary });
+        res.json({
+            summary,
+            responseTime: `${endTime - startTime} ms`,
+        });
 
     } catch (err) {
-        console.error("UPLOAD ERROR:", err);
-        console.error("FULL ERROR:", err.response?.data || err.message || err);
-        res.status(500).send(err.response?.data || err.message || "Error processing file");
+        console.error("ERROR:", err);
+        res.status(500).send("Error processing file");
     }
 });
 

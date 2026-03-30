@@ -1,39 +1,66 @@
 import React from "react";
 import axios from "axios";
 
-export default function FileUpload({ setSummary, setLoading }) {
+export default function FileUpload({
+    setSummary,
+    setLoading,
+    setError,
+    setResponseTime
+}) {
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // ❌ Reset states
+        setError("");
+        setSummary("");
+        setResponseTime("");
+
+        // ✅ File type validation
         if (
             file.type !== "application/pdf" &&
             !file.type.startsWith("image/")
         ) {
-            alert("Only PDF or Image allowed");
+            setError("Only PDF or Image files are allowed");
+            return;
+        }
+
+        // ✅ File size validation (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            setError("File must be under 5MB");
             return;
         }
 
         try {
             setLoading(true);
 
-            // ⚠️ IMPORTANT: send as binary (not formData)
             const res = await axios.post(
                 import.meta.env.VITE_API_URL,
                 file,
                 {
                     headers: {
-                        "Content-Type": file.type || "application/pdf"
-                    }
+                        "Content-Type": file.type || "application/pdf",
+                    },
                 }
             );
 
+            // ✅ Set summary
             setSummary(res.data.summary);
+
+            // ⚡ Capture response time (from backend)
+            if (res.data.responseTime) {
+                setResponseTime(res.data.responseTime);
+            }
 
         } catch (err) {
             console.error(err);
-            alert(err.response?.data || "Error processing file");
+
+            setError(
+                err.response?.data ||
+                "Error processing file. Please try again."
+            );
+
         } finally {
             setLoading(false);
         }

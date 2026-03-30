@@ -5,12 +5,14 @@ exports.extractText = async (file) => {
         if (file.mimetype === "application/pdf") {
             const data = await pdfParse(file.buffer);
 
-            console.log("PDF text sample:", data.text?.slice(0, 100));
+            const text = data.text?.trim();
 
-            return data.text;
+            console.log("PDF text sample:", text?.slice(0, 100));
+
+            return text || "";
         }
 
-        // 🖼️ fallback for images
+        // TODO: add OCR later if needed
         return "";
 
     } catch (err) {

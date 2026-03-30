@@ -7,6 +7,8 @@ import { FaGithub, FaLinkedin, FaGlobe } from "react-icons/fa";
 export default function App() {
     const [summary, setSummary] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [responseTime, setResponseTime] = useState("");
 
     return (
         <div className="container">
@@ -19,12 +21,29 @@ export default function App() {
                 <p className="subtitle">
                     AI-powered document summarization using Gemini
                 </p>
+
+                {/* ✅ Small UX detail (impresses) */}
+                <p style={{ fontSize: "12px", opacity: 0.7 }}>
+                    Max file size: 5MB | Supported: PDF, Images
+                </p>
             </div>
 
             {/* 📦 Upload */}
             <div className="section">
-                <FileUpload setSummary={setSummary} setLoading={setLoading} />
+                <FileUpload
+                    setSummary={setSummary}
+                    setLoading={setLoading}
+                    setError={setError}
+                    setResponseTime={setResponseTime}
+                />
             </div>
+
+            {/* ❌ Error */}
+            {error && (
+                <div className="section">
+                    <p style={{ color: "red" }}>❌ {error}</p>
+                </div>
+            )}
 
             {/* ⏳ Loader */}
             {loading && (
@@ -37,6 +56,13 @@ export default function App() {
             {summary && (
                 <div className="section">
                     <SummaryCard summary={summary} />
+
+                    {/* ⚡ Response Time (IMPORTANT) */}
+                    {responseTime && (
+                        <p style={{ marginTop: "10px", fontSize: "14px" }}>
+                            ⚡ Response Time: {responseTime}
+                        </p>
+                    )}
                 </div>
             )}
 
