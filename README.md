@@ -1,64 +1,83 @@
-# Government Report Analyzer  
+# 🚀 Government Report Analyzer
 
-🚀 An AI-powered web app that analyzes and summarizes government reports (PDF/Image) using **Google Gemini API**.  
+An AI-powered web app that analyzes and summarizes government reports (PDF/Image) using **Google Gemini API**, built with a focus on **performance, scalability, and robust handling of large inputs**.
 
-🌐 **Live Demo:** https://gov-report-analyzer.netlify.app/  
-
----
-
-## ✨ Features  
-
-- 📂 Upload **PDF or Image files**  
-- 🧠 Extracts text from documents  
-- 🤖 Generates **2-line concise AI summary (Gemini)**  
-- ⚡ Handles edge cases (invalid files, empty text, API failures)  
-- 🌐 Fully deployed (Frontend + Backend)  
-- 🎨 Modern, aesthetic UI with smooth animations  
+🌐 **Live Demo:** [https://gov-report-analyzer.netlify.app/](https://gov-report-analyzer.netlify.app/)
 
 ---
 
-## 🛠️ Tech Stack  
+## ✨ Features
 
-| Category   | Technologies |
-|------------|-------------|
-| 💻 Frontend | React (Vite), Axios, CSS (Glassmorphism UI) |
-| ⚙️ Backend  | Node.js, Express.js, File Handling |
-| 📄 Parsing  | PDF-Parse |
-| 🤖 AI       | Google Gemini API |
+* 📂 Upload **PDF or Image files**
+* 🧠 Extracts text from documents (PDF parsing)
+* 🤖 Generates **2-line concise AI summaries using Gemini**
+* ⚡ **Optimized API response time** (no raw file sent to LLM)
+* 📦 **Chunking + parallel processing** for large documents
+* 🧾 **Structured JSON response enforcement** from Gemini
+* 🚫 File validation (**type + size limit**)
+* ⚠️ Robust error handling (invalid files, empty text, API failures)
+* 🌐 Fully deployed (Frontend + Backend)
+* 🎨 Clean, responsive UI
+
+---
+
+## 🛠️ Tech Stack
+
+| Category      | Technologies                         |
+| ------------- | ------------------------------------ |
+| 💻 Frontend   | React (Vite), Axios, CSS             |
+| ⚙️ Backend    | Node.js, Express.js                  |
+| 📄 Parsing    | PDF-Parse                            |
+| 🤖 AI         | Google Gemini API                    |
 | ☁️ Deployment | Netlify (Frontend), Render (Backend) |
 
 ---
 
-## 📸 Preview  
+## 🧠 Key Engineering Improvements
+
+This project focuses on **real-world backend considerations**:
+
+* **Avoided sending raw files to Gemini** → reduced latency significantly
+* **Implemented chunking (≈3k chars)** → handles large documents efficiently
+* **Parallel processing (Promise.all)** → faster summarization
+* **Enforced strict JSON output** → reliable and structured responses
+* **Graceful fallback handling** → ensures consistent output even on failures
+* **File size limit (5MB)** → prevents performance bottlenecks
+
+---
+
+## 📸 Preview
 
 ![App Screenshot](SreenShots/SS_1.png)
 
 ---
 
-## ⚙️ How It Works  
+## ⚙️ How It Works
 
-1. 📤 Upload a PDF/Image  
-2. 🧾 Backend extracts text  
-3. 🤖 Gemini processes content  
-4. ✨ Returns a clean 2-line summary  
-
----
-
-## ⚠️ Note  
-
-- Gemini API may have **free-tier quota limits**  
-- Fallback mechanism ensures the app always responds  
+1. 📤 Upload a PDF/Image
+2. 🧾 Backend extracts text (PDF parsing)
+3. ✂️ Text is split into chunks
+4. 🤖 Gemini summarizes each chunk (parallel calls)
+5. 🔗 Summaries are merged into a final 2-line response
+6. ✨ Clean structured output returned to frontend
 
 ---
 
-## 🚀 Getting Started (Local Setup)  
+## ⚠️ Notes
 
-### 1️⃣ Clone the repo  
+* Gemini API has **free-tier rate limits**
+* Backend includes **fallback handling** for empty/invalid responses
+
+---
+
+## 🚀 Getting Started (Local Setup)
+
+### 1️⃣ Clone the repo
 
 ```bash
 git clone https://github.com/SamP231004/Gov-Report-Analyzer.git
 cd Gov-Report-Analyzer
-````
+```
 
 ---
 
@@ -123,8 +142,9 @@ npm run dev
 ## 💡 Future Improvements
 
 * 🎯 Drag & Drop upload
-* 📚 Multi-page document support
-* 📊 Highlight key insights
-* 🧠 Save report history
+* 🖼️ OCR for images (Tesseract integration)
+* 📊 Highlight key insights instead of plain summary
+* 🧠 Save & manage document history
+* ⚡ Streaming responses for faster UX
 
 ---
